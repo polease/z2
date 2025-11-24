@@ -102,7 +102,7 @@ class VideoProcessor:
             )
 
             # Output with subtitled video and copied audio
-            # Match original video encoding exactly (High profile, Level 4.2)
+            # Use Baseline profile for maximum compatibility with all platforms
             stream = ffmpeg.output(
                 video_with_subs,
                 audio,
@@ -110,14 +110,12 @@ class VideoProcessor:
                 vcodec='libx264',
                 acodec='aac',  # Re-encode audio to AAC for compatibility
                 **{
-                    'profile:v': 'high',  # High profile to match original video
-                    'level': '4.2',       # Level 4.2 to match original
-                    'pix_fmt': 'yuv420p', # Standard pixel format
-                    'movflags': '+faststart',  # Enable fast start for web playback
-                    'preset': 'medium',   # Balance between speed and quality
-                    'crf': '23',          # Constant quality (lower = better quality)
-                    'maxrate': '5M',      # Max bitrate 5Mbps
-                    'bufsize': '10M'      # Buffer size
+                    'profile:v': 'baseline',  # Baseline profile for maximum compatibility
+                    'level': '3.1',           # Level 3.1 supports most devices
+                    'pix_fmt': 'yuv420p',     # Standard pixel format
+                    'movflags': '+faststart', # Enable fast start for web playback
+                    'preset': 'medium',       # Balance between speed and quality
+                    'crf': '23'               # Constant quality (lower = better quality)
                 }
             )
 
