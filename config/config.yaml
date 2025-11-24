@@ -1,0 +1,45 @@
+# Z AI Knowledge Distillery Platform Configuration
+
+storage:
+  base_path: "./storage"
+  video_path: "./storage/videos"
+  subtitle_path: "./storage/subtitles"
+  data_path: "./storage/data"
+
+whisper:
+  model: "medium"  # Options: tiny, base, small, medium, large
+  language: "en"
+  device: "cpu"  # Options: cpu, cuda
+
+openai:
+  model: "gpt-4-turbo"
+  max_tokens: 4000
+  temperature: 0.3
+
+translation:
+  chunk_size: 5000  # characters per chunk for long transcripts
+  overlap: 200      # overlap between chunks for context
+  max_subtitle_chars: 42  # max characters per subtitle line for Chinese
+
+subtitle_style:
+  font_name: "SimHei"  # Options: SimHei, Microsoft YaHei
+  font_size: 24
+  primary_color: "&H00FFFFFF"  # White
+  outline_color: "&H00000000"  # Black
+  border_style: 1
+  outline: 2
+  shadow: 1
+
+publishing:
+  wechat:
+    enabled: true
+    title_suffix: " (中文字幕)"
+  bilibili:
+    enabled: true
+    category: "科技"
+    tags_auto_generate: true
+
+logging:
+  level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_path: "./logs/z2.log"

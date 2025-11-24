@@ -1,0 +1,32 @@
+# Core dependencies for Z AI Knowledge Distillery Platform
+
+# Video download and processing
+yt-dlp>=2024.0.0
+
+# AI and transcription
+openai>=1.0.0
+openai-whisper>=20231117
+
+# Video processing
+ffmpeg-python>=0.2.0
+
+# Subtitle handling
+pysrt>=1.1.0
+
+# HTTP requests
+requests>=2.31.0
+
+# Configuration management
+python-dotenv>=1.0.0
+pyyaml>=6.0.0
+
+# Utilities
+tqdm>=4.66.0
+
+# Publishing (WeChat integration via social-auto-upload)
+playwright>=1.56.0
+loguru>=0.7.3
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
