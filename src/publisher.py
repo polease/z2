@@ -72,14 +72,15 @@ class Publisher:
             account_file = Path(self.cookie_base_path) / "tencent_uploader" / "account.json"
 
             # Check and setup cookie
-            cookie_valid = asyncio.run(weixin_setup(str(account_file), handle=False))
+            # Handle cookie authentication - will open browser if needed
+            cookie_valid = asyncio.run(weixin_setup(str(account_file), handle=True))
 
             if not cookie_valid:
-                logger.error("WeChat cookie is invalid or missing. Please run cookie extraction first.")
+                logger.error("WeChat cookie authentication failed.")
                 return {
                     'status': 'failed',
                     'platform': 'wechat',
-                    'message': 'Cookie authentication failed. Please extract cookies first.',
+                    'message': 'Cookie authentication failed.',
                     'post_id': None,
                     'url': None
                 }
