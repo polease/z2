@@ -5,7 +5,8 @@ Each time you work on a task, please do following
 3. clarify with user about detail requirements until you are clear to move on to design
 4. start the work by output the design in the same folder as well (with name such as 02. Design.md, 02.1 Design-[TopicName].md), and ask for review before really implement the code changes, if there is any other useful document need to generate to user for review, feel free to do so in the same folder
 5. after the review confirmed, you can start to implement the code changes (user might ask you to change the design, in that case, you need to update the PBI document and ask for review again)
-6. after the work done, please summarize all the work done in the PBI document with summary of what's changed and potential next steps and future potential improvements
+6. each time you finish a task, make sure you test the code changes and make sure it works as expected, start with unit test and also should have end to end test
+7. after the work done, please summarize all the work done in the PBI document with summary of what's changed and potential next steps and future potential improvements
 </Work-SOP>
 <Resource-File-Naming>
 When you create any document, please name it with following format:
