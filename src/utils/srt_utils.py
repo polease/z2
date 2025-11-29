@@ -17,11 +17,15 @@ def seconds_to_srt_time(seconds: float) -> str:
     Returns:
         SRT formatted timestamp string
     """
-    td = timedelta(seconds=seconds)
-    hours = int(td.total_seconds() // 3600)
-    minutes = int((td.total_seconds() % 3600) // 60)
-    secs = int(td.total_seconds() % 60)
-    millis = int((td.total_seconds() % 1) * 1000)
+    # Round to nearest millisecond to avoid floating-point precision issues
+    total_millis = round(seconds * 1000)
+
+    hours = total_millis // 3600000
+    remaining = total_millis % 3600000
+    minutes = remaining // 60000
+    remaining = remaining % 60000
+    secs = remaining // 1000
+    millis = remaining % 1000
 
     return f"{hours:02d}:{minutes:02d}:{secs:02d},{millis:03d}"
 

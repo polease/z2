@@ -3,6 +3,7 @@ Translation and Chinese SRT generation module
 """
 
 import os
+import re
 from openai import OpenAI
 from typing import Dict, List
 from .utils.logger import get_app_logger
@@ -140,22 +141,25 @@ class Translator:
             for i, seg in enumerate(segments)
         ])
 
-        prompt = f"""You are a professional translator specializing in AI and technology content.
-Translate the following English subtitle segments to Chinese (Simplified).
+        segment_count = len(segments)
+        prompt = f"""Translate the following {segment_count} English subtitle segments to Chinese (Simplified).
 
-Requirements:
-- Maintain technical accuracy
+CRITICAL RULES:
+1. Output EXACTLY {segment_count} translations - no more, no less
+2. Each translation must be on a SINGLE line (no line breaks within a translation)
+3. Number each line exactly as: "1. translation", "2. translation", etc.
+4. One-to-one mapping: segment 1 → translation 1, segment 2 → translation 2, etc.
+5. Do NOT split, merge, or skip any segments
+6. Do NOT add explanations or notes
+
+Translation guidelines:
 - Use appropriate AI/tech terminology in Chinese
-- Keep the tone professional and accessible
-- Keep translations concise for subtitle readability (max {self.max_chars_per_line} chars per line when possible)
-- Preserve meaning and nuance
-- Output ONLY the Chinese translation for each segment, preserving the order
-- Number each translation to match the input (1., 2., 3., etc.)
+- Keep translations concise for subtitles
 
-English Segments:
+English Segments ({segment_count} total):
 {segments_text}
 
-Output the Chinese translations (one per line, numbered):"""
+Output EXACTLY {segment_count} numbered Chinese translations:"""
 
         try:
             response = self.client.chat.completions.create(
@@ -170,30 +174,36 @@ Output the Chinese translations (one per line, numbered):"""
 
             translations_text = response.choices[0].message.content.strip()
 
-            # Parse numbered translations
-            translations = []
+            # Initialize translations array with placeholders
+            segment_count = len(segments)
+            translations = ["[翻译缺失]"] * segment_count
+
+            # Parse numbered translations and place them by index
+            parsed_count = 0
             for line in translations_text.split('\n'):
                 line = line.strip()
                 if not line:
                     continue
 
-                # Remove number prefix (e.g., "1. ", "2. ")
-                if '. ' in line:
-                    _, translation = line.split('. ', 1)
-                    translations.append(translation)
-                else:
-                    translations.append(line)
+                # Match number prefix pattern: "1. ", "12. ", "100. " etc.
+                match = re.match(r'^(\d+)\.\s*(.+)$', line)
+                if match:
+                    num = int(match.group(1))
+                    text = match.group(2)
+                    # Place translation at correct index (1-based to 0-based)
+                    if 1 <= num <= segment_count:
+                        translations[num - 1] = text
+                        parsed_count += 1
+                    else:
+                        logger.warning(f"Translation number {num} out of range (1-{segment_count})")
 
-            # Ensure we have the right number of translations
-            if len(translations) != len(segments):
+            # Log if there were missing translations
+            if parsed_count != segment_count:
+                missing_indices = [i + 1 for i, t in enumerate(translations) if t == "[翻译缺失]"]
                 logger.warning(
-                    f"Translation count mismatch: expected {len(segments)}, got {len(translations)}"
+                    f"Translation count mismatch: expected {segment_count}, got {parsed_count}. "
+                    f"Missing indices: {missing_indices[:20]}{'...' if len(missing_indices) > 20 else ''}"
                 )
-
-                # Pad or truncate as needed
-                while len(translations) < len(segments):
-                    translations.append("[翻译缺失]")
-                translations = translations[:len(segments)]
 
             return translations
 

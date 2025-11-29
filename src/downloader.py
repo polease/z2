@@ -95,6 +95,7 @@ class VideoDownloader:
                 'channel': info.get('uploader', 'Unknown'),
                 'channel_id': info.get('channel_id', ''),
                 'upload_date': upload_date,
+                'year_month': year_month,
                 'duration': info.get('duration', 0),
                 'description': info.get('description', ''),
                 'thumbnail_url': info.get('thumbnail', ''),
